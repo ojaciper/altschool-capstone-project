@@ -3,7 +3,7 @@ from app.db.models.course import Course
 from app.db.models.user import User
 from sqlalchemy.orm import Session
 from uuid import UUID
-from typing import List
+# from typing import List
 from app.schemas.enrollment import EnrollmentCreate
 
 
@@ -23,10 +23,12 @@ class EnrollmentService:
 
     @staticmethod
     def enroll_course(db: Session, enrollment_data: EnrollmentCreate):
-        course = db.query(Course).filter(Course.id == enrollment_data.course_id)
+        course = db.query(Course).filter(Course.id == enrollment_data.course_id).first()
+        print(course)
         if not course:
-            return "not_course"
-        if not course.is_active:
+            return None
+
+        if course.is_active != True:
             return "course_not_active"
 
         count = (
@@ -48,20 +50,31 @@ class EnrollmentService:
         )
         if exists:
             return "already_enrolled"
-        
+
         enrollment = Enrollment(
-            user_id = enrollment_data.user_id,
-            course_id = enrollment_data.course_id
-            )
+            user_id=enrollment_data.user_id, course_id=enrollment_data.course_id
+        )
         db.add(enrollment)
         db.commit()
         db.refresh(enrollment)
         return enrollment
 
     @staticmethod
-    def remove_student_from_enrollment(db:Session):
-        pass
+    def remove_student_from_enrollment(db: Session, user_id: UUID, course_id: UUID):
+        enrollment = (
+            db.query(Enrollment)
+            .filter(Enrollment.user_id == user_id, Enrollment.course_id == course_id)
+            .first()
+        )
+        if not enrollment:
+            return None
+        db.delete(enrollment)
+        db.commit()
+        return True
 
     @staticmethod
-    def get_enrollment_for_a_course():
-        pass
+    def get_enrollment_for_a_course(db:Session, course_id:UUID):
+        enrollment = db.query(Enrollment).filter(Enrollment.course_id == course_id).all()
+        if not enrollment:
+            return None
+        return enrollment

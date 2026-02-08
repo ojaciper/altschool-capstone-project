@@ -84,3 +84,5 @@ def activate_course(
         raise HTTPException(status_code=404, detail="Course not found")
 
     return course
+
+

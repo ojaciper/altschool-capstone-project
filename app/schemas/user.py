@@ -26,4 +26,8 @@ class UserActivate(BaseModel):
 class UserRead(UserBase):
     id:UUID4
     model_config = ConfigDict(from_attributes=True)
-    
+
+class Response(BaseModel):
+    status:str
+    message:str
+    data: Optional[UserRead|list[UserRead]] = None

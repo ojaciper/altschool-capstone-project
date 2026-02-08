@@ -29,6 +29,13 @@ class UserService:
         if not user:
             return None
         return user
+    
+    @staticmethod
+    def get_all_user(db:Session)->list:
+        user = db.query(User).all()
+        if not user:
+            return None
+        return list(user)
 
     @staticmethod
     def get_user_by_email(db: Session, email: str):
