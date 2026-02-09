@@ -49,7 +49,7 @@ def remove_student_from_course(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    if user.role == "admin":
+    if user.role == "student":
         raise HTTPException(
             status_code=409, detail="admin can not deregister student from a course"
         )
@@ -61,6 +61,7 @@ def remove_student_from_course(
             raise HTTPException(
                 status_code=404, detail="No user or course found in the enrollment"
             )
+            
         return {"message": "Remove successfully"}
 
 

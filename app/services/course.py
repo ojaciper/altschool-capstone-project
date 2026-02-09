@@ -1,6 +1,7 @@
 from typing import List
 from uuid import UUID
 from app.db.models.course import Course
+from app.db.models.enrollment import Enrollment
 from app.schemas.course import CourseCreate, CourseBase, CourseUpdate
 from sqlalchemy.orm import Session
 from app.dependency.deps import get_user_role
@@ -68,7 +69,7 @@ class CouserServices:
         return course
 
     @staticmethod
-    def activate_course(db:Session,course_id:UUID, is_active:bool):
+    def activate_course(db: Session, course_id: UUID, is_active: bool):
         course = db.query(Course).filter(Course.id == course_id).first()
         print(course)
         if not course:
@@ -77,3 +78,27 @@ class CouserServices:
         db.commit()
         db.refresh(course)
         return course
+
+    @staticmethod
+    def remove_course(db: Session, course_id: UUID):
+        course = db.query(Course).filter(Course.id == course_id).first()
+
+        if not course:
+            return None
+        is_enrolled = (
+            db.query(Enrollment).filter(Enrollment.course_id == course_id).first()
+        )
+        if is_enrolled:
+            return "students_enrolled_in_the_course"
+        db.delete(course)
+        db.commit()
+        return True
+
+    @staticmethod
+    def is_enrolled(db: Session, course_id: UUID):
+        is_enrolled = (
+            db.query(Enrollment).filter(Enrollment.course_id == course_id).first()
+        )
+        if is_enrolled:
+            return True
+        return False

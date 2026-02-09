@@ -12,6 +12,7 @@ class EnrollmentService:
     @staticmethod
     def get_all_enrollment(db: Session) -> list:
         enrollment = db.query(Enrollment).all()
+        print(enrollment)
         return list(enrollment)
 
     @staticmethod

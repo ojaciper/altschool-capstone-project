@@ -82,7 +82,21 @@ def activate_course(
     course = CouserServices.activate_course(db, course_id, course_data.is_active)
     if course == None:
         raise HTTPException(status_code=404, detail="Course not found")
-
     return course
 
 
+@router.delete("/{course_id}/remove", status_code=200)
+def remove_course(
+    course_id: UUID, db: Session = Depends(get_db), admin=Depends(admin_only)
+):
+
+    course = CouserServices.remove_course(db, course_id)
+    if course == None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    is_enrolled = CouserServices.is_enrolled(db, course_id)
+    
+    if is_enrolled:
+        raise HTTPException(
+            status_code=409, detail="You can not remove course that is enrolled"
+        )
+    return {"message": "course remove successfully"}
