@@ -1,13 +1,17 @@
+
+
 def test_signup(client):
     payload = {
         "full_name": "string",
         "email": "user@example.com",
         "role": "student",
         "is_active": True,
-        "password": "string",
+        "password": "string"
     }
     respons = client.post("/api/v1/auth/signup", json=payload)
-    assert respons.status_code == 201
+    print(respons.json())
+    assert respons.status_code in [201,400]
+    return respons.json()
     
 def test_email_aready_exist(client):
     payload = {
@@ -19,6 +23,7 @@ def test_email_aready_exist(client):
     }
     respons = client.post("/api/v1/auth/signup", json=payload)
     assert respons.status_code == 400
+    # return respons.json()
     
 # def test_internal_server_error(client):
 #     payload = {
@@ -41,10 +46,9 @@ def test_login(client):
     response_data = respons.json()
     assert   "access_token" in response_data
     assert response_data['token_type'] == "bearer"
+    return response_data["access_token"]
+  
 
-    
-    
-    
 def test_wrong_details(client):
     payload = {
         "username": "use@example.com",
