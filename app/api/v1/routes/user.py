@@ -36,8 +36,8 @@ def get_user_by_email(
 
 
 @router.patch("/{user_id}/activate", response_model=UserRead)
-def activate_user(user_id: UUID, data: UserActivate, db: Session = Depends(get_db)):
-    user = UserService.update_user_status(db, user_id, data.is_active)
+def activate_user(user_id: UUID,email:str, data: UserActivate, db: Session = Depends(get_db)):
+    user = UserService.update_user_status(db, user_id, email, data.is_active, )
     try:
         if not user:
             raise HTTPException(status_code=404, detail="User not found")

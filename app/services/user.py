@@ -45,8 +45,8 @@ class UserService:
         return user
     
     @staticmethod
-    def update_user_status(db:Session, user_id:UUID, is_active:bool):
-        user = db.query(User).filter(User.id == str(user_id)).first()
+    def update_user_status(db:Session, user_id:UUID, email:str, is_active:bool):
+        user = db.query(User).filter(User.id == str(user_id), User.email == email).first()
         if not user:
             return None
         user.is_active = is_active
