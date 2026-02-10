@@ -17,6 +17,7 @@ class UserService:
             email=user_data.email,
             hashed_password=get_password_hash(user_data.password),
             role=user_data.role,
+            is_active = user_data.is_active
         )
         db_session.add(new_user)
         db_session.flush()
