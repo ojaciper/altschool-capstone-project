@@ -40,6 +40,11 @@ class CouserServices:
         return list(active_course)
 
     @staticmethod
+    def inactive_course(db: Session) -> List:
+        in_active_course = db.query(Course).filter(Course.is_active == False).all()
+        return list(in_active_course)
+
+    @staticmethod
     def get_course_by_id(db: Session, course_id):
         course = db.query(Course).filter(Course.id == course_id).first()
         if not course:

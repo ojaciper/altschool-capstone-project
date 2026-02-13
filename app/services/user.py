@@ -4,6 +4,7 @@ from app.db.models.user import User
 from app.schemas.user import UserCreate
 from app.db.models.user import Role
 from app.core.security import get_password_hash
+from fastapi import HTTPException
 
 
 class UserService:
@@ -46,14 +47,21 @@ class UserService:
         return user
     
     @staticmethod
-    def update_user_status(db:Session, user_id:UUID, email:str, is_active:bool):
-        user = db.query(User).filter(User.id == str(user_id), User.email == email).first()
-        if not user:
-            return None
-        user.is_active = is_active
-        db.flush()
-        db.refresh(user)
-        return user
+    def update_user_status(db:Session, user_id:UUID, is_active:bool):
+        user = db.query(User).filter(User.id == str(user_id)).first()
+        try:
+            if not user:
+                return None
+            if user.is_active == True:
+                return "account_activated"
+            user.is_active = is_active
+            db.flush()
+            db.refresh(user)
+            return user
+        except Exception as e:
+            print(e)
+            db.rollback()
+            raise HTTPException(status_code=500, detail="Internal Server Error")
     
 
     

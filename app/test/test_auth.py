@@ -1,5 +1,4 @@
 
-
 def test_signup(client):
     payload = {
         "full_name": "string",
@@ -10,9 +9,10 @@ def test_signup(client):
     }
     respons = client.post("/api/v1/auth/signup", json=payload)
     print(respons.json())
-    assert respons.status_code in [201,400]
+    assert respons.status_code in [201, 400]
     return respons.json()
-    
+
+
 def test_email_aready_exist(client):
     payload = {
         "full_name": "string",
@@ -21,10 +21,11 @@ def test_email_aready_exist(client):
         "is_active": True,
         "password": "string",
     }
+
     respons = client.post("/api/v1/auth/signup", json=payload)
     assert respons.status_code == 400
-    # return respons.json()
-    
+
+
 # def test_internal_server_error(client):
 #     payload = {
 #         "full_name": "string",
@@ -35,19 +36,20 @@ def test_email_aready_exist(client):
 #     }
 #     respons = client.post("/api/v1/auth/signup", json=payload)
 #     assert respons.status_code == 500
-    
+
+
 def test_login(client):
     payload = {
         "username": "user@example.com",
         "password": "string",
     }
     respons = client.post("/api/v1/auth/login", data=payload)
-    assert respons.status_code in [200,403]
+    assert respons.status_code in [200, 403]
     response_data = respons.json()
-    assert   "access_token" in response_data
-    assert response_data['token_type'] == "bearer"
+    assert "access_token" in response_data
+    assert response_data["token_type"] == "bearer"
     return response_data["access_token"]
-  
+
 
 def test_wrong_details(client):
     payload = {
@@ -57,6 +59,7 @@ def test_wrong_details(client):
     respons = client.post("/api/v1/auth/login", data=payload)
     assert respons.status_code == 401
 
+
 def test_account_not_active(client):
     payload = {
         "username": "user@example.com",
@@ -64,4 +67,4 @@ def test_account_not_active(client):
     }
     respons = client.post("/api/v1/auth/login", data=payload)
     print(respons.status_code)
-    assert respons.status_code in [200,403]
+    assert respons.status_code in [200, 403]

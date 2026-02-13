@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.dependency.deps import get_current_user, get_db, admin_only
 from app.schemas.user import UserRead, UserActivate, Response
@@ -36,14 +36,15 @@ def get_user_by_email(
 
 
 @router.patch("/{user_id}/activate", response_model=UserRead)
-def activate_user(user_id: UUID,email:str, data: UserActivate, db: Session = Depends(get_db)):
-    user = UserService.update_user_status(db, user_id, email, data.is_active, )
-    try:
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        db.commit()
-        return user
-    except Exception as e:
-        print(e)
-        db.rollback()
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+def activate_user(user_id: UUID, data: UserActivate, db: Session = Depends(get_db)):
+    user = UserService.update_user_status(
+        db,
+        user_id,
+        data.is_active,
+    )
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user == "account_activated":
+        raise HTTPException(status_code=409, detail="account activated already")
+    db.commit()
+    return user
