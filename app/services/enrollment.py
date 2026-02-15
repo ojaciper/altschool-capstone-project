@@ -3,6 +3,7 @@ from app.db.models.course import Course
 from app.db.models.user import User
 from sqlalchemy.orm import Session
 from uuid import UUID
+
 # from typing import List
 from app.schemas.enrollment import EnrollmentCreate
 
@@ -74,8 +75,10 @@ class EnrollmentService:
         return True
 
     @staticmethod
-    def get_enrollment_for_a_course(db:Session, course_id:UUID):
-        enrollment = db.query(Enrollment).filter(Enrollment.course_id == course_id).all()
+    def get_enrollment_for_a_course(db: Session, course_id: UUID):
+        enrollment = (
+            db.query(Enrollment).filter(Enrollment.course_id == course_id).all()
+        )
         if not enrollment:
             return None
         return enrollment
