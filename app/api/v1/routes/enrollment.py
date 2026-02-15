@@ -15,6 +15,15 @@ def enrollment(db: Session = Depends(get_db), current_user=Depends(admin_only)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not data")
     return Response(status="success", message="course", data=enrollment)
 
+@router.get("/{id}", response_model=EnrollmentRead, status_code=200)
+def get_enrollment_by_id(
+    id: UUID, db: Session = Depends(get_db), current_user=Depends(get_current_user)
+):
+    enrollment = EnrollmentService.get_enrollment_by_id(id, db)
+    if not enrollment:
+        raise HTTPException(status_code=404, detail="enrollment not found")
+    return enrollment
+
 
 @router.post("/", response_model=EnrollmentRead, status_code=201)
 def enrollment(
@@ -61,7 +70,7 @@ def remove_student_from_course(
             raise HTTPException(
                 status_code=404, detail="No user or course found in the enrollment"
             )
-            
+
         return {"message": "Remove successfully"}
 
 
@@ -73,3 +82,4 @@ def course_enrollment(
     if enrollment == None:
         raise HTTPException(status_code=404, detail="No Enrollment in this course")
     return Response(status="success", message="Enrollment Retrived", data=enrollment)
+

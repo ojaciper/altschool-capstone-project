@@ -18,5 +18,5 @@ class EnrollmentRead(EnrollmentBase):
     
 class Response(BaseModel):
     status: str
-    message:str
+    message:str = None
     data: Optional[EnrollmentRead | list[EnrollmentRead]] = None
