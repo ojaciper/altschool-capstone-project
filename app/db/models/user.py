@@ -3,13 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from enum import Enum
 import uuid
 from app.db.base import Base
-
-
-
-class Role(str, Enum):
-    STUDENT = 'student'
-    ADMIN = "admin"
-
+from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ ="users"
@@ -19,3 +13,5 @@ class User(Base):
     hashed_password = Column(String(255),unique=True, nullable=False)
     role = Column(String(255), default="student")
     is_active=Column(Boolean, default=False)
+
+    enrollments = relationship("Enrollment", back_populates="user", cascade="all, delete-orphan")

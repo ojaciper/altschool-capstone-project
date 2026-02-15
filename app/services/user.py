@@ -2,7 +2,6 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 from app.db.models.user import User
 from app.schemas.user import UserCreate
-from app.db.models.user import Role
 from app.core.security import get_password_hash
 from fastapi import HTTPException
 

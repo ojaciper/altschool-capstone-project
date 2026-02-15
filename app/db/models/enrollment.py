@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from datetime import timezone, datetime
 import uuid
 from app.db.base import Base
+from sqlalchemy.orm import relationship
 
 
 class Enrollment(Base):
@@ -11,3 +12,7 @@ class Enrollment(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     course_id = Column(UUID(as_uuid=True), ForeignKey("courses.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
+
+    # ORM relationships
+    user = relationship("User", back_populates="enrollments")
+    course = relationship("Course", back_populates="enrollments")

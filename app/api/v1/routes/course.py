@@ -14,7 +14,6 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 
-
 @router.post("", response_model=CourseRead, status_code=201)
 def course(
     course_data: CourseCreate,
@@ -33,7 +32,7 @@ def course(
     return course
 
 
-@router.get("", response_model=Response, status_code=200)
+@router.get("/", response_model=Response, status_code=200)
 def active_course(
     db: Session = Depends(get_db), current_user=Depends(get_current_user)
 ):
@@ -44,7 +43,16 @@ def active_course(
     )
 
 
-@router.get("/", response_model=Response, status_code=200)
+
+@router.get("/all", response_model=Response, status_code=200)
+def all_course(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    course = CouserServices.all_course(db)
+    return Response(
+        message="success",
+        data=course,
+    )
+
+@router.get("", response_model=Response, status_code=200)
 def in_active_course(db: Session = Depends(get_db), admin=Depends(admin_only)):
     course = CouserServices.inactive_course(db)
     return Response(message="success", data=course)
@@ -98,7 +106,7 @@ def remove_course(
     course_id: UUID, db: Session = Depends(get_db), admin=Depends(admin_only)
 ):
 
-    course = CouserServices.get_course_by_id(db,course_id)
+    course = CouserServices.get_course_by_id(db, course_id)
     if course == None:
         raise HTTPException(status_code=404, detail="Course not found")
     is_enrolled = CouserServices.is_enrolled(db, course_id)
@@ -109,3 +117,12 @@ def remove_course(
         )
     CouserServices.remove_course(db, course_id)
     return {"message": "course remove successfully"}
+
+
+@router.get("/all", response_model=Response, status_code=200)
+def all_course(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    course = CouserServices.all_course(db)
+    return Response(
+        message="success",
+        data=course,
+    )

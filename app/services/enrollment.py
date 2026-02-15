@@ -82,3 +82,13 @@ class EnrollmentService:
         if not enrollment:
             return None
         return enrollment
+    
+    @staticmethod
+    def get_enrollment_for_a_student(db: Session, user_id: UUID):
+        enrollment = (
+            db.query(Enrollment).filter(Enrollment.user_id == user_id).all()
+        )
+        if not enrollment:
+            return None
+        return enrollment
+

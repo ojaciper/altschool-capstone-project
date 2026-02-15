@@ -1,15 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel, EmailStr, ConfigDict, UUID4
 from typing import Optional
-from app.db.models.user import Role
-
-
-
-# class UserRole(str, Enum):
-#     STUDENT = "student"
-#     ADMIN ="admin"
-    
-
 
 class UserBase(BaseModel):
     full_name:str
